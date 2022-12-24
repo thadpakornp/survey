@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "394293657175",
+    "project_id": "survey-c13f6",
+    "storage_bucket": "survey-c13f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394293657175:android:b24ab5dabea2d9cb5f2d12",
+        "android_client_info": {
+          "package_name": "com.thadphet.survey.untitled1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "394293657175-74kgg86ipm3gboiuvcd4rfva7213sdru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXnVs_tL8WqjwVHNf_EnhBkSqBXFwuiZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "394293657175-74kgg86ipm3gboiuvcd4rfva7213sdru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
