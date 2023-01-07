@@ -1,4 +1,11 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:untitled1/main.dart';
+import 'package:untitled1/register.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -9,12 +16,95 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final _storage = const FlutterSecureStorage();
+
+  String _lang = 'EN';
+
+  @override
+  void initState() {
+    super.initState();
+    _storage.read(key: 'langSet').then((value) {
+      setState(() {
+        _lang = value!;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   Future _login() async {
-    print(_usernameController.text);
-    print(_passwordController.text);
+    FirebaseFirestore.instance.collection('users').where('username', isEqualTo: _usernameController.text).get().then((value) {
+      if (value.docs.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('User not found')));
+      } else {
+        if (value.docs[0].data()['password'] == _passwordController.text) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login successful')));
+          _storage.write(key: 'login', value: 'true');
+          _storage.write(key: 'username', value: value.docs[0].data()['username']);
+          _storage.write(key: 'phone', value: value.docs[0].data()['phone']);
+          _storage.write(key: 'name', value: value.docs[0].data()['firstName']);
+          _storage.write(key: 'surname', value: value.docs[0].data()['lastName']);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MyApp()), (route) => false);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wrong password')));
+        }
+      }
+    });
+  }
+
+  Future _loginWithGoogle() async {
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+
+    GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    FirebaseFirestore.instance.collection('users').where('username', isEqualTo: googleUser?.id.toString()).get().then((value) {
+      if (value.docs.isEmpty) {
+        // insert to firestore
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc()
+            .set({
+          'username': googleUser?.id.toString(),
+          'password': Random().nextInt(1000000).toString(),
+          'firstName': googleUser?.displayName.toString(),
+          'lastName': '',
+          'phone': '',
+        }).then((value) {
+          //success
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login successful')));
+          _storage.write(key: 'login', value: 'true');
+          _storage.write(key: 'username', value: googleUser?.id.toString());
+          _storage.write(key: 'phone', value: '');
+          _storage.write(key: 'name', value:googleUser?.displayName.toString() );
+          _storage.write(key: 'surname', value: '');
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MyApp()), (route) => false);
+        }).catchError((error) {
+          //error
+          SnackBar snackBar = SnackBar(content: Text('Error: $error'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login successful')));
+        _storage.write(key: 'login', value: 'true');
+        _storage.write(key: 'username', value: googleUser?.id.toString());
+        _storage.write(key: 'phone', value: '');
+        _storage.write(key: 'name', value:googleUser?.displayName.toString() );
+        _storage.write(key: 'surname', value: '');
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MyApp()), (route) => false);
+      }
+    });
   }
 
   @override
@@ -28,11 +118,11 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Username'),
+                Text(_lang == 'EN' ? 'Username' : 'ชื่อผู้ใช้งาน'),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _usernameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Username',
                   ),
@@ -43,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextField(
                   obscureText: true,
                   controller: _passwordController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Password',
                   ),
@@ -52,19 +142,32 @@ class _LoginPageState extends State<LoginPage> {
                 Center(
                   child: ElevatedButton(
                     onPressed: _login,
-                    child: Text('Login'),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.lightGreen),
                     ),
+                    child: const Text('Login'),
                   ),
                 ),
                 const SizedBox(height: 10),
                 Center(
                   child: TextButton(
                     onPressed: null,
-                    child: Text('Register'),
                     style: ButtonStyle(
                       foregroundColor: MaterialStateProperty.all(Colors.lightGreen),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RegisterPage()),
+                        ).then((value) {
+                          if (value != null) {
+                            _usernameController.text = value;
+                            SnackBar snackBar = const SnackBar(content: Text('Registered Successfully'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          }
+                        });
+                      }, child: const Text('Register')
                     ),
                   ),
                 ),
@@ -74,20 +177,20 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     ElevatedButton(
                       onPressed: null,
-                      child: Text('Facebook'),
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.blue),
                       ),
+                      child: const Text('Facebook'),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: null,
-                      child: Text('Google'),
+                      onPressed: _loginWithGoogle,
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.red),
                       ),
+                      child: const Text('Google'),
                     ),
                   ],
                 ),

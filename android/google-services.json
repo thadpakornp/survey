@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:394293657175:android:b24ab5dabea2d9cb5f2d12",
+        "mobilesdk_app_id": "1:394293657175:android:e9ac6f043473a43f5f2d12",
         "android_client_info": {
           "package_name": "com.thadphet.survey.untitled1"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "394293657175-d0qna2tieaqen0iclg5mcgnldb579152.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thadphet.survey.untitled1",
+            "certificate_hash": "f32d337a29b071dbed0dc7dc8186dc86f272fb19"
+          }
+        },
         {
           "client_id": "394293657175-74kgg86ipm3gboiuvcd4rfva7213sdru.apps.googleusercontent.com",
           "client_type": 3

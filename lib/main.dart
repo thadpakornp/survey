@@ -2,18 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:untitled1/login.dart';
-import 'package:untitled1/firebase_options.dart';
+import 'package:untitled1/languate.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(options: FirebaseOptions(
-  //   apiKey: apiKey,
-  //   appId: appId,
-  //   messagingSenderId: messagingSenderId,
-  //   projectId: projectId,
-  //   storageBucket: storageBucket,
-  // ));
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -43,16 +37,24 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  final storange = new FlutterSecureStorage();
+  final storange = const FlutterSecureStorage();
 
+  @override
   void initState() {
     super.initState();
-    storange.read(key: 'login').then((value) {
-      if (value == null || value == false) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
-            (route) => false);
+    // storange.deleteAll();
+    storange.read(key: 'langSet').then((value) {
+      if (value == null) {
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LanguatePage()), (route) => false);
+      } else {
+        storange.read(key: 'login').then((value) {
+          if (value == null || value == false) {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+                    (route) => false);
+          }
+        });
       }
     });
   }
