@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:untitled1/localization/language/languages.dart';
 import 'package:untitled1/main.dart';
 import 'package:untitled1/register.dart';
 
@@ -21,16 +22,9 @@ class _LoginPageState extends State<LoginPage> {
 
   final _storage = const FlutterSecureStorage();
 
-  String _lang = 'EN';
-
   @override
   void initState() {
     super.initState();
-    _storage.read(key: 'langSet').then((value) {
-      setState(() {
-        _lang = value!;
-      });
-    });
   }
 
   @override
@@ -111,92 +105,104 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(15.0, 0, 15.0, 0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
               children: [
-                Text(_lang == 'EN' ? 'Username' : 'ชื่อผู้ใช้งาน'),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Username',
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text('Password'),
-                const SizedBox(height: 10),
-                TextField(
-                  obscureText: true,
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Password',
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: _login,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.lightGreen),
-                    ),
-                    child: const Text('Login'),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Center(
-                  child: TextButton(
-                    onPressed: null,
-                    style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.lightGreen),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => RegisterPage()),
-                        ).then((value) {
-                          if (value != null) {
-                            _usernameController.text = value;
-                            SnackBar snackBar = const SnackBar(content: Text('Registered Successfully'));
-                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          }
-                        });
-                      }, child: const Text('Register')
-                    ),
-                  ),
-                ),
-                const Center(child: Text('or login with')),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: null,
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.blue),
-                      ),
-                      child: const Text('Facebook'),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: _loginWithGoogle,
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.red),
-                      ),
-                      child: const Text('Google'),
-                    ),
-                  ],
-                ),
-              ]
+                const Icon(Icons.arrow_back),
+                InkWell(child: Text(Languages.of(context)!.appName), onTap: () => Navigator.pop(context)),
+              ],
             ),
-          ),
+            const SizedBox(height: 50),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(15.0, 0, 15.0, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(Languages.of(context)!.usernameLogin, style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Username',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(Languages.of(context)!.passwordLogin, style: TextStyle(fontSize: 20)),
+                    const SizedBox(height: 10),
+                    TextField(
+                      obscureText: true,
+                      controller: _passwordController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Password',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _login,
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.lightGreen),
+                        ),
+                        child: const Text('Login'),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: TextButton(
+                        onPressed: null,
+                        style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.all(Colors.lightGreen),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => RegisterPage()),
+                            ).then((value) {
+                              if (value != null) {
+                                _usernameController.text = value;
+                                SnackBar snackBar = const SnackBar(content: Text('Registered Successfully'));
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              }
+                            });
+                          }, child: const Text('Register')
+                        ),
+                      ),
+                    ),
+                    const Center(child: Text('or login with')),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: null,
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.blue),
+                          ),
+                          child: const Text('Facebook'),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: _loginWithGoogle,
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.red),
+                          ),
+                          child: const Text('Google'),
+                        ),
+                      ],
+                    ),
+                  ]
+                ),
+              ),
+            ),
+          ],
         )
       ),
     );
