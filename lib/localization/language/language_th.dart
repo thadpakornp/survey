@@ -18,4 +18,7 @@ class LanguageTh extends Languages {
 
   @override
   String get passwordLogin => "รหัสผ่าน";
+
+  @override
+  String get labelYourGender => "เพศของคุณ?";
 }

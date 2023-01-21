@@ -18,4 +18,7 @@ class LanguageEn extends Languages {
 
   @override
   String get passwordLogin => "Password";
+
+  @override
+  String get labelYourGender => "Your gender?";
 }

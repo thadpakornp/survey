@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 abstract class Languages {
-
   static Languages? of(BuildContext context) {
     return Localizations.of<Languages>(context, Languages);
   }
@@ -18,4 +17,5 @@ abstract class Languages {
 
   String get passwordLogin;
 
+  String get labelYourGender;
 }

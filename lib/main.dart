@@ -4,10 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:untitled1/localization/locale_constant.dart';
 import 'package:untitled1/localization/localizations_delegate.dart';
-import 'package:untitled1/login.dart';
-import 'package:untitled1/languate.dart';
-import 'package:untitled1/pages/questionare.dart';
-
+import 'package:untitled1/screens/splashScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +25,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   Locale? _locale;
 
   void setLocale(Locale locale) {
@@ -90,67 +86,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   final storange = const FlutterSecureStorage();
 
   @override
-  void initState() {
-    super.initState();
-    storange.read(key: 'langSet').then((value) {
-      if (value == null) {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LanguatePage()), (route) => false);
-      } else {
-        storange.read(key: 'login').then((value) {
-          if (value == null || value == false) {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-                    (route) => false);
-          }
-        });
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
-              'SurveyMe',
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const QuestionPage()));
-        },
-        tooltip: 'Survey',
-        child: const Icon(Icons.edit_calendar_rounded),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_rounded),
-            label: 'Results',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_rounded),
-            label: 'Settings',
-          ),
-        ]
-      ),// This trailing comma makes auto-formatting nicer for build methods.
-    );
+    return const SplashScreen();
   }
 }

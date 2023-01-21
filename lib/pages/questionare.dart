@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:untitled1/localization/language/languages.dart';
 
 class QuestionPage extends StatefulWidget {
   const QuestionPage({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class _QuestionPageState extends State<QuestionPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'เพศของคุณ?',
+          Languages.of(context)!.labelYourGender,
           style: TextStyle(fontSize: 20),
         ),
         RadioListTile(
@@ -183,43 +184,43 @@ class _QuestionPageState extends State<QuestionPage> {
   }
 
   Future _insertData() async {
-    FirebaseFirestore.instance
-        .collection('answers')
-        .doc()
-        .set({
-          'username': username,
-          'datetime': DateTime.now(),
-          'sex': sex,
-          'smoking': smoking,
-          'smokingNumber': smokingNumber,
-          'sick': sick,
+    _countScore();
+    FirebaseFirestore.instance.collection('answers').doc().set({
+      'username': username,
+      'datetime': DateTime.now(),
+      'sex': sex,
+      'smoking': smoking,
+      'smokingNumber': smokingNumber,
+      'sick': sick,
+      'score': score,
     }).then((value) {
-      showDialog(context: context, builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('บันทึกข้อมูลเรียบร้อย'),
-          actions: [
-            TextButton(
-              child: Text('กลับหน้าแรก'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('ผลประเมิน'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _countData();
-              },
-            ),
-          ],
-        );
-      });
-    })
-    .catchError((error) => print('error'));
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('บันทึกข้อมูลเรียบร้อย'),
+              actions: [
+                TextButton(
+                  child: Text('กลับหน้าแรก'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text('ผลประเมิน'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _countData();
+                  },
+                ),
+              ],
+            );
+          });
+    }).catchError((error) => print('error'));
   }
 
-  void _countData() {
+  void _countScore() {
     if (smoking != 'Never') {
       if (smoking == 'Alway') {
         setState(() {
@@ -269,23 +270,25 @@ class _QuestionPageState extends State<QuestionPage> {
         _txt = 'คุณมีความเสี่ยงต่ำ';
       });
     }
+  }
 
-    print(score);
-
-    showDialog(context: context, builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(_txt),
-        actions: [
-          TextButton(
-            child: Text('กลับหน้าแรก'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    });
+  void _countData() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(_txt),
+            actions: [
+              TextButton(
+                child: Text('กลับหน้าแรก'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -328,7 +331,9 @@ class _QuestionPageState extends State<QuestionPage> {
                         content: Text('กรุณาเลือกจำนวนบุหรี่'),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    } else if (smoking == 'Alway' && smokingNumber == 'มากกว่า 50 ตัว' && sick == null) {
+                    } else if (smoking == 'Alway' &&
+                        smokingNumber == 'มากกว่า 50 ตัว' &&
+                        sick == null) {
                       SnackBar snackBar = SnackBar(
                         content: Text('กรุณาเลือกคำตอบ'),
                       );
