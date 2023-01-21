@@ -26,6 +26,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    _storage.read(key: 'login').then((value) {
+      if (value == 'true') {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MyWidget()),
+            (route) => false);
+      }
+    });
   }
 
   @override
