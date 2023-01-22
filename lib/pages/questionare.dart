@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:untitled1/localization/language/languages.dart';
 
 class QuestionPage extends StatefulWidget {
@@ -184,10 +185,13 @@ class _QuestionPageState extends State<QuestionPage> {
   }
 
   Future _insertData() async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd/MM/yyy HH:mm:ss').format(now);
+
     _countScore();
     FirebaseFirestore.instance.collection('answers').doc().set({
       'username': username,
-      'datetime': DateTime.now(),
+      'datetime': formattedDate,
       'sex': sex,
       'smoking': smoking,
       'smokingNumber': smokingNumber,
